@@ -39,7 +39,7 @@ functions.config = async function (action, db, id, data) {
                                 id: id,
                             }
                         });
-                        if (getGuild[0] !== undefined) throw 'Guild already exists';
+                        if (getGuild[0] !== undefined) throw { error: 'Guild already exists' };
                         const newGuild = await Guild.create({
                             id: id,
                         });
@@ -55,7 +55,7 @@ functions.config = async function (action, db, id, data) {
                                 id: id
                             }
                         });
-                        if (getUser[0] !== undefined) throw 'User already exists';
+                        if (getUser[0] !== undefined) throw { error: 'User already exists' };
                         const newUser = await User.create({
                             id: id
                         });
@@ -63,7 +63,7 @@ functions.config = async function (action, db, id, data) {
                         return newUser;
                     } catch (error) {
                         return { error: error };
-                    }
+                    };
                 default:
                     return { error: 'Nothing provided (create)' };
             }
@@ -75,11 +75,12 @@ functions.config = async function (action, db, id, data) {
                             where: {
                                 id: id,
                             }
-                        })
+                        });
+                        if (gotGuild[0] === undefined) throw { error: `Guild does not exist`, exist: false };
                         return gotGuild;
                     } catch (error) {
-                        return { error: error };
-                    }
+                        return { error: error, exist: true };
+                    };
                 case 'user':
                     try {
                         const gotUser = await User.findAll({
@@ -87,23 +88,15 @@ functions.config = async function (action, db, id, data) {
                                 id: id
                             }
                         });
-                        if (gotUser[0] === undefined) {
-                            const getUser = await User.findAll({
-                                where: {
-                                    id: 1
-                                }
-                            });
-                            return { nouser: getUser };
-                        };
+                        if (gotUser[0] === undefined) throw { error: 'User does not exist', exist: false }
                         return gotUser;
                     } catch (error) {
-                        return { error: error };
+                        return { error: error, exist: true };
                     }
                 default:
                     return { error: 'Nothing provided (get)' };
             }
         case 'edit':
-            if (!data || !data.update || !data.value) return 'Some arguments are missing';
             switch (db) {
                 case 'guild':
                     const gotGuild = await Guild.update({ [data.update]: data.value }, {

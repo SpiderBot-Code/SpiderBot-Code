@@ -12,6 +12,13 @@ module.exports = class Conf extends Commands {
     };
     run(msg) {
         if (!this.checkPerms(msg)) return;
-        this.sendT(msg, { title: 'This command is under development', color: this.userData[0].embed.color })
+        var embed = this.embeds
+        .setTitle(`This command does not have any functions yet`)
+        .addField('Try again later', `Sadly this command has no function yet`)
+        .setColor(this.userData.embed.color)
+        .setAuthor(msg.author.username, msg.author.displayAvatarURL())
+        .setFooter(`SpiderBot`)
+        .setTimestamp();
+        msg.channel.send(embed);
     }
 };
