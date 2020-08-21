@@ -21,7 +21,7 @@ Guild.init({
 class User extends Model { }
 User.init({
     id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true },
-    embed: { type: DataTypes.JSON, allowNull: true, defaultValue: { color: null } }
+    embed: { type: DataTypes.JSON, allowNull: true, defaultValue: { color: '#ff0000' } }
 }, { sequelize, modelName: 'user' });
 
 
@@ -31,7 +31,7 @@ functions.config = async function (action, db, id, data) {
     await sequelize.sync();
     if (!action || !db || !id) return 'Missing arguments';
     switch (action) {
-        case 'create':
+        case 'get':
             switch (db) {
                 case 'guild':
                     try {
@@ -40,7 +40,7 @@ functions.config = async function (action, db, id, data) {
                                 id: id,
                             }
                         });
-                        if (getGuild[0] !== undefined) throw { error: 'Guild already exists' };
+                        if (getGuild[0] !== undefined) return getGuild[0];
                         const newGuild = await Guild.create({
                             id: id,
                         });
@@ -56,7 +56,7 @@ functions.config = async function (action, db, id, data) {
                                 id: id
                             }
                         });
-                        if (getUser[0] !== undefined) throw { error: 'User already exists' };
+                        if (getUser[0] !== undefined) return getUser[0];
                         const newUser = await User.create({
                             id: id
                         });
@@ -66,37 +66,10 @@ functions.config = async function (action, db, id, data) {
                         return { error: error };
                     };
                 default:
-                    return { error: 'Nothing provided (create)' };
-            }
-        case 'get':
-            switch (db) {
-                case 'guild':
-                    try {
-                        const gotGuild = await Guild.findAll({
-                            where: {
-                                id: id,
-                            }
-                        });
-                        if (gotGuild[0] === undefined) throw { error: `Guild does not exist`, exist: false };
-                        return gotGuild;
-                    } catch (error) {
-                        return { error: error, exist: true };
-                    };
-                case 'user':
-                    try {
-                        const gotUser = await User.findAll({
-                            where: {
-                                id: id
-                            }
-                        });
-                        if (gotUser[0] === undefined) throw { error: 'User does not exist', exist: false }
-                        return gotUser;
-                    } catch (error) {
-                        return { error: error, exist: true };
-                    }
-                default:
-                    return { error: 'Nothing provided (get)' };
-            }
+                    return { error: `The table '${db}' does not exist (get)` };
+            };
+        case 'create':
+            return this.config('get', db, id);
         case 'edit':
             switch (db) {
                 case 'guild':
@@ -114,26 +87,43 @@ functions.config = async function (action, db, id, data) {
                     })
                     return gotUser;
                 default:
-                    return { error: 'Nothing provided (edit)' };
+                    return { error: `The table '${db}' does not exist` };
             }
         case 'delete':
             switch (db) {
                 case 'guild':
-                    try {
-                        await Guild.destroy({
-                            where: {
-                                id: id
-                            }
+                    if (data === true) {
+                        this.config('get', 'guild', id).then(async (guildDB) => {
+                            if (guildDB.error) return console.log(guildDB.error);
+                            if (guildDB.saveonkick) return 'Guild not deleted (saveonkick)';
+                            try {
+                                await Guild.destroy({
+                                    where: {
+                                        id: id
+                                    }
+                                });
+                                return 'Guild deleted from database';
+                            } catch (error) {
+                                return { error: error };
+                            };
                         });
-                        return 'Guild deleted from database';
-                    } catch (error) {
-                        return { error: error };
-                    }
+                    } else {
+                        try {
+                            await Guild.destroy({
+                                where: {
+                                    id: id
+                                }
+                            });
+                            return 'Guild deleted from database';
+                        } catch (error) {
+                            return { error: error };
+                        };
+                    };
                 default:
-                    return { error: 'Nothing provided' };
+                    return { error: `The table '${db}' does not exist (delete)` };
             }
         default:
-            return { error: 'Nothing provided' };
+            return { error: `The action '${action}' does not exist (config)` };
     }
 }
 

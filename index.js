@@ -19,13 +19,12 @@ bot.on('message', async (msg) => {
 })
 
 bot.on('guildCreate', async (guild) => {
-    func.config('create', 'guild', guild.id).then(i => console.log(i));
+    func.config('create', 'guild', guild.id).then(i => {
+        if (i.error) return console.log(i);
+        console.log('Guild added');
+    });
 });
 
 bot.on('guildDelete', async (guild) => {
-    func.config('get', 'guild', guild.id).then(i => {
-        console.log(i[0].saveonkick);
-        if (i[0].saveonkick) return console.log('Guild not deleted from database');
-        func.config('delete', 'guild', guild.id).then(i => console.log(i));
-    });
+    func.config('delete', 'guild', guild.id, true).then(i => console.log(i));
 });

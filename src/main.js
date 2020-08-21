@@ -24,12 +24,18 @@ class Commands {
         var parsed = parser.parse(msg, guildDB.prefix || this.botconfig.prefix);
         if (!parsed.success) return;
         var args = parsed.arguments;
-
+        // check perms cooldown args run
         this.check(parsed.command).then(data => {
             if (!data.iscmd) return this.help(msg, parsed, guildDB, userDB);
             this.perms(msg, parsed, guildDB, userDB, data.cmd).then(r => {
                 if (!r) return func.send(msg, `You do not have permission to use that command`);
-                this.run(msg, args, data.cmd, parsed);
+                this.cooldown().then(r => {
+                    if (!r) return func.send(msg, 'Please wait ${cooldown} seconds before using that command again.');
+                    this.args().then(r => {
+                        if (!r) return func.send(msg, 'You did not provide all the arguments (use ${prefix}help ${command})');
+                        this.run(msg, args, data.cmd, parsed);
+                    });
+                });
             });
         });
     }
@@ -71,6 +77,12 @@ class Commands {
             return false;
             // this.sendT(msg, { title: 'Permission error', desc: `You do not have permission to use that command (${this.prefix}${this.name})`, color: this.userData.embed.color });
         };
+        return true;
+    }
+    async cooldown() {
+        return true;
+    }
+    async args() {
         return true;
     }
     async run(msg, args, command, parsed) {
@@ -139,9 +151,11 @@ class SpiderBot {
         var guildDB = [], userDB = [];
         if (msg.channel.type === 'text') {
             await func.config('get', 'guild', msg.guild.id).then((i) => {
-                if (i.error) return console.log(i.error)
+                if (i.error) return console.log(i.error);
                 guildDB = i;
             });
+        } else {
+            return msg.channel.send('Commands in dms disabled');
         };
         await func.config('get', 'user', msg.author.id).then((i) => {
             if (i.error && !i.exist) return console.log(i.error)
