@@ -1,9 +1,10 @@
 {
   "name": "spiderbot-code",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "SpiderBot try 2. SpiderBot made to do everything, free, forever.",
   "main": "index.js",
   "dependencies": {
+    "discord-command-parser": "^1.4.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "sequelize": "^6.3.4",

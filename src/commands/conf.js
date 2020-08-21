@@ -1,16 +1,17 @@
-const { Commands } = require('../main.js');
-
-module.exports = class Conf extends Commands {
+module.exports = class Conf {
     constructor(client, message, args, data, bot) {
-       super(client, message, args, data, bot, {
-           name: 'conf',
+       this.cmdconf = {
+           command: 'conf',
            usage: 'Configure guild settings',
            guildOnly: true,
            perms: ['ADMINISTRATOR'],
            arguments: '<show | set[<option> <value>] | reset[<option> <value>]>'
-       })
+       }
     };
-    run(msg) {
+    conf() { return this.cmdconf };
+    run(msg, args) {
+        console.log('conf command')
+        /*
         if (!this.checkPerms(msg)) return;
         var embed = this.embeds
         .setTitle(`This command does not have any functions yet`)
@@ -20,5 +21,6 @@ module.exports = class Conf extends Commands {
         .setFooter(`SpiderBot`)
         .setTimestamp();
         msg.channel.send(embed);
+        */
     }
 };

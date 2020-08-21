@@ -31,7 +31,7 @@ The bots commands and their usage can be found here <a href="">documentation</a>
 - SpiderBot Invite (Not ready)
 - [Trello board](https://trello.com/b/5VGBZZ64/spiderbot)
 - [SpiderBot Support Discord](https://discord.gg/6kFYJAP)
-- SpiderBot Homepage (Not started)
+- SpiderBot Homepage (Not done)
 
 
 ## Run the bot yourself

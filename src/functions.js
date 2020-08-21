@@ -26,6 +26,7 @@ User.init({
 
 
 var functions = {};
+
 functions.config = async function (action, db, id, data) {
     await sequelize.sync();
     if (!action || !db || !id) return 'Missing arguments';
@@ -135,5 +136,9 @@ functions.config = async function (action, db, id, data) {
             return { error: 'Nothing provided' };
     }
 }
+
+functions.send = async function (msg, reply, type) {
+    msg.channel.send(reply);
+};
 
 module.exports = functions;

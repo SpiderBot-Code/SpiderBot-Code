@@ -11,6 +11,12 @@ const Spider = new SpiderBot({
 });
 
 const bot = Spider.client();
+bot.on('message', async (msg) => {
+    if (msg.author.bot) return;
+    Spider.filter(msg);
+    if (msg.channel.type === 'dm') return Spider.send(msg, { title: 'The bot is disabled in the dms' });
+    Spider.command(msg);
+})
 
 bot.on('guildCreate', async (guild) => {
     func.config('create', 'guild', guild.id).then(i => console.log(i));
