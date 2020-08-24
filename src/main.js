@@ -28,11 +28,28 @@ class Commands {
         this.check(parsed.command).then(data => {
             if (!data.iscmd) return this.help(msg, parsed, guildDB, userDB);
             this.perms(msg, parsed, guildDB, userDB, data.cmd).then(r => {
-                if (!r) return func.send(msg, `You do not have permission to use that command`);
+                if (!r) return func.send(msg, {
+                    username: false,
+                    desc: `You do not have permission to use that command`,
+                    title: `Missing Permissions`,
+                    color: '#fff000',
+                    userDB: userDB,
+                    guildDB: guildDB
+                });
                 this.cooldown().then(r => {
-                    if (!r) return func.send(msg, 'Please wait ${cooldown} seconds before using that command again.');
+                    if (!r) return func.send(msg, {
+                        desc: 'Please wait ${cooldown} seconds before using that command again.',
+                        title: `Cooldown`,
+                        userDB: userDB,
+                        guildDB: guildDB
+                    });
                     this.args().then(r => {
-                        if (!r) return func.send(msg, 'You did not provide all the arguments (use ${prefix}help ${command})');
+                        if (!r) return func.send(msg, {
+                            desc: 'You did not provide all the arguments (use ${prefix}help ${command})',
+                            title: 'Missing Arguments',
+                            userDB: userDB,
+                            guildDB: guildDB
+                        });
                         this.run(msg, args, data.cmd, parsed);
                     });
                 });
@@ -80,9 +97,11 @@ class Commands {
         return true;
     }
     async cooldown() {
+        // Cooldown not added
         return true;
     }
     async args() {
+        // Argument testing not added
         return true;
     }
     async run(msg, args, command, parsed) {
@@ -93,7 +112,7 @@ class Commands {
         for (cmd in this.commands) {
             text += `${parsed.prefix}${this.commands[cmd].config.command} ${this.commands[cmd].config.arguments} | ${this.commands[cmd].config.usage}\n`
         }
-        func.send(msg, text)
+        func.send(msg, { desc: text, guildDB: guildDB, userDB: userDB });
     }
 }
 
@@ -105,50 +124,26 @@ class SpiderBot {
     client() {
         client.login(this.bot.token);
 
-        client.on('ready', () => {
+        client.on('ready', async() => {
             this.bot.readyMessage(client);
-        });
-        /*
-        client.on('message', async (msg) => {
-            if (msg.author.bot) return;
-            this.filter(msg);
-            var guildData = {}, userData = {};
-            if (msg.channel.type === 'dm') return this.send(msg, { title: 'The bot is disabled in the dms' })
-            if (msg.channel.type === 'text') {
-                await func.config('get', 'guild', msg.guild.id).then((i) => {
-                    if (i.error) return console.log('Error')
-                    guildData = i;
-                });
-            };
-            await func.config('get', 'user', msg.author.id).then((i) => {
-                if (i.error && !i.exist) return console.log(i.error)
-                userData = i;
+            var gguilds = await func.config('get', 'allguilds', 0).then(guilds => { return guilds });
+            var cguilds = client.guilds.cache.map(guilds => guilds.id);
+            await cguilds.forEach(guild => {
+                func.config('get', 'guild', guild);
             });
-            let prefix = guildData.prefix || this.bot.prefix;
-            const parsed = parser.parse(msg, prefix);
-            if (!parsed.success) return;
-            // parser: args, command, prefix, message
-            this.command(parsed, guildData, userData);
-            // this.command(msg, command, { guild: guildData, user: userData, prefix: prefix });
-            if (parsed.command === "ping") {
-                return message.reply("Pong!");
-            }
-
-            if (!msg.content.includes(prefix)) return;
-            const command = msg.content.split(/ /g)[0].split(prefix)[1];
-            this.command(msg, command, { guild: guildData, user: userData, prefix: prefix });
-            
+            await gguilds.forEach(guild => {
+                if (!cguilds.includes(guild.id)) {
+                    func.config('delete', 'guild', guild.id, false);
+                };
+            });
+            var gguilds = await func.config('get', 'allguilds', 0).then(guilds => { return guilds });
+            new BotStatus(client).set(`A Game Of being Built\n Serving ${gguilds.length} guilds`);
         });
-        */
-        client.on('messageUpdate', async (msg) => {
-            if (msg.author.bot) return;
-            console.log(`msg updated: ${msg.content}`)
-        })
+
         return client;
-    };
-    // async command(msg, command, data) {
+    }
     async command(msg) {
-        var guildDB = [], userDB = [];
+        var guildDB = {}, userDB = {};
         if (msg.channel.type === 'text') {
             await func.config('get', 'guild', msg.guild.id).then((i) => {
                 if (i.error) return console.log(i.error);
@@ -157,45 +152,20 @@ class SpiderBot {
         } else {
             return msg.channel.send('Commands in dms disabled');
         };
+
         await func.config('get', 'user', msg.author.id).then((i) => {
-            if (i.error && !i.exist) return console.log(i.error)
+            if (i.error) return console.log(i.error)
             userDB = i;
         });
 
-        this.commands.start(msg, guildDB[0], userDB[0]);
-
-
-        /*
-        try {
-            require(`./commands/${parsed.command}.js`);
-        } catch (error) {
-            return this.send(parsed.message, { desc: `The command ${parsed.command} does not exist` });
-        };
-        const cmdModule = require(`./commands/${parsed.command}.js`);
-        // let args = msg.content.replace(`${guildData.prefix}${parsed.command}`, '');
-        const cmd = new cmdModule(client, parsed, guildData, userData, this.bot);
-        // const cmd = new cmdModule(client, msg, args, data, this.bot);
-        cmd.run();
-        */
+        this.commands.start(msg, guildDB, userDB);
     };
-    async send(msg, data) {
-        msg.channel.send({
-            embed: {
-                color: data && data.color || '#fff000',
-                title: data && data.title || '',
-                author: {
-                    name: msg.author.username,
-                    icon_url: msg.author.displayAvatarURL()
-                },
-                description: data && data.desc || '',
-                timestamp: new Date(),
-                footer: {
-                    text: 'Spiderbot'
-                }
-            }
-        })
+    async send(msg, data, type) {
+        func.send(msg, data, type);
     };
-    async filter(msg) {
+    async filter(msg, guildData) {
+        if (guildData.allowSwearing) return;
+        if (guildData.allowSwearChannels.includes(msg.channel.id)) return;
         fs.readFile('src/config/words.csv', 'utf8', (err, file) => {
             if (err) return console.error(err);
             const bannedWords = file.split(/\r?\n/);
@@ -243,10 +213,19 @@ class CommandsOld extends SpiderBot {
         }
         return true;
     }
-}
+};
+
+class BotStatus {
+    constructor(client) {
+        this.client = client;
+    }
+    set(text) {
+        this.client.user.setActivity(text)
+    }
+};
 
 module.exports = {
     SpiderBot,
     CommandsOld,
     Commands
-}
+};

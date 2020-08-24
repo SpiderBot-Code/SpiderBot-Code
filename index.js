@@ -14,9 +14,18 @@ const bot = Spider.client();
 bot.on('message', async (msg) => {
     if (msg.author.bot) return;
     Spider.filter(msg);
-    if (msg.channel.type === 'dm') return Spider.send(msg, { title: 'The bot is disabled in the dms' });
+    if (msg.channel.type === 'dm') return Spider.send(msg, { title: 'The bot is disabled in the dms for now' });
     Spider.command(msg);
-})
+});
+
+client.on('messageUpdate', async (msg) => {
+    if (msg.author.bot) return;
+    if (msg.channel.type === 'dm') return;
+    func.config('get', 'guild', msg.guild.id).then(guildData => {
+        if (guildData.error) return console.log(guildData);
+        Spider.filter(msg, guildData);
+    });
+});
 
 bot.on('guildCreate', async (guild) => {
     func.config('create', 'guild', guild.id).then(i => {
