@@ -1,0 +1,6 @@
+{
+	"extends": "@aero",
+	"rules": {
+		"consistent-return": "off"
+	}
+}

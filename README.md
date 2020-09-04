@@ -2,17 +2,22 @@
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/SpiderBot-Code/SpiderBot-Code.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SpiderBot-Code/SpiderBot-Code/context:javascript)
 ![Discord](https://img.shields.io/discord/728316562163105925?color=blue&label=Discord&logo=%7B%7Bl&logoColor=blue)
 # SpiderBot
-Spiderbot, Made to do everything, free, forever. (Of course the bot does nothing right now, I'm developing it)  
+Spiderbot, Made to do everything, free, forever. (Of course the bot does not do much right now, I'm still developing it)  
 SpiderBot brings moderation, leveling, games, and much more!  
 The bot is still being developed, and has a long way till It's done.
 
 Original plan: Replace all the bots on my Discord server.  
-New plan: Replace all the bots on Discord (just kidding, but it helps the slogan ok)
+New plan: Replace all the bots on Discord (just kidding)
 
 This bot is under heavy development and the code is **A little** messy right now.
 
 [Invite the bot to your server]() (not added yet as the bot is not ready for this)  
 [SpiderBot help and testing Discord server](https://discord.gg/6kFYJAP)
+
+## Recent Updates
+- Command handler
+- Command permissions checker
+- Some commands including a help command when an invalid command is used
 
 ## Planned Features
 - Swear filter
@@ -39,8 +44,8 @@ This is not recommended as you could just add the official bot to your server.
 
 Install nodejs version `12.0.0` or newer.  
 Then navigate to the clones directory in the terminal, run `npm install` to install the needed npm packages.  
-Create a file named `.env` in the bots main directory and add the following; `TOKEN=YOURBOTSTOKEN`, replacing YOURBOTSTOKEN with the token you got in the developer portal.  
-Rename the file `database.example.sqlite` in the config folder to `database.sqlite`  
+Rename the `.example-env` file to `.env` and add your bots token  
+Rename the file `database.example.sqlite3` in the config folder to `database.sqlite3`  
 To start the bot, run `npm start` or `node index.js`
 
 ## Resources Used

@@ -4,9 +4,8 @@ module.exports = class Send {
 
 	constructor() {
 		this.cmdconf = {
-			command: 'ping',
-			usage: 'Get the bots ping',
-			cooldown: 100,
+			command: 'help',
+			usage: 'Bot commands help',
 			guildOnly: false,
 			args: '<none>'
 		};
@@ -14,7 +13,7 @@ module.exports = class Send {
 	conf() { return this.cmdconf; }
 	run(msg) {
 		func.send(msg, {
-			title: `Pong ${Date.now() - msg.createdTimestamp}ms. API: ${Math.round(msg.client.ws.ping)}ms`
+			title: `The help command is not set up yet`
 		});
 	}
 

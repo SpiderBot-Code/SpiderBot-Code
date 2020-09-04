@@ -1,31 +1,31 @@
 {
-  "name": "spiderbot-code",
-  "version": "0.0.4",
-  "description": "SpiderBot try 2. SpiderBot made to do everything, free, forever.",
-  "main": "index.js",
-  "dependencies": {
-    "discord-command-parser": "^1.4.3",
-    "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0",
-    "sequelize": "^6.3.4",
-    "sqlite3": "^5.0.0"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "node index.js",
-    "start": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/spidergamin/SpiderBot-Code.git"
-  },
-  "keywords": [
-    "spiderbot"
-  ],
-  "author": "SpiderGamin",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/spidergamin/SpiderBot-Code/issues"
-  },
-  "homepage": "https://github.com/spidergamin/SpiderBot-Code#readme"
+	"name": "spiderbot-code",
+	"version": "0.0.5",
+	"description": "SpiderBot try 2. SpiderBot made to do everything, free, forever.",
+	"main": "index.js",
+	"dependencies": {
+		"@aero/eslint-config": "^1.0.5",
+		"discord-command-parser": "^1.4.3",
+		"discord.js": "^12.2.0",
+		"dotenv": "^8.2.0",
+		"sequelize": "^6.3.4",
+		"sqlite3": "^5.0.0"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"start": "node src/index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SpiderBot-Code/SpiderBot-Code.git"
+	},
+	"keywords": [
+		"spiderbot"
+	],
+	"author": "SpiderGamin",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/SpiderBot-Code/SpiderBot-Code/issues"
+	},
+	"homepage": "https://github.com/SpiderBot-Code/SpiderBot-Code#readme"
 }
