@@ -3,3 +3,4 @@ node_modules
 src/config/database.sqlite3
 src/stuff.js
 /OLD/
+*.log

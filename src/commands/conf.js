@@ -10,7 +10,6 @@ module.exports = class Conf {
 
 		};
 	}
-	conf() { return this.cmdconf; }
 	run(msg) {
 		return msg.channel.send('this command does not have a function yet');
 	}

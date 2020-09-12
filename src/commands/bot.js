@@ -6,12 +6,10 @@ module.exports = class Conf {
 			usage: 'Configure guild settings',
 			guildOnly: false,
 			perms: ['BOT_OWNER'],
-			args: '<config | shutdown>'
+			args: '<none>'
 
 		};
 	}
-	conf() { return this.cmdconf; }
-	errperm() { return 'Only bot owners can use this command'; }
 	async run(msg, args) {
 		if (args[0] === 'shutdown') {
 			await msg.channel.send('Shutting down SpiderBot');
@@ -19,7 +17,5 @@ module.exports = class Conf {
 		}
 		return msg.channel.send('this command does not have a function yet');
 	}
-	cmdconfig() { return; }
-	cmdshutdown() { return; }
 
 };

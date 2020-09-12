@@ -15,9 +15,13 @@ This bot is under heavy development and the code is **A little** messy right now
 [SpiderBot help and testing Discord server](https://discord.gg/6kFYJAP)
 
 ## Recent Updates
-- Command handler
-- Command permissions checker
-- Some commands including a help command when an invalid command is used
+- Added command argument checking (not fully tested)
+- Started work on the `help` command
+- Mainly just sending this update to back up my code
+
+- Updated the command handler
+- Added the command permissions checking
+- Improvements to logging
 
 ## Planned Features
 - Swear filter
@@ -48,7 +52,7 @@ Rename the `.example-env` file to `.env` and add your bots token
 Rename the file `database.example.sqlite3` in the config folder to `database.sqlite3`  
 To start the bot, run `npm start` or `node index.js`
 
-## Resources Used
+## Resources
 - [Discord.js Guide](https://discordjs.guide/)  
 - [Discord.js Documentation](https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/general/welcome)  
 - [Discord.js discord server](https://discord.gg/bRCvFy9)

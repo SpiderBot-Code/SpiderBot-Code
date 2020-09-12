@@ -3,23 +3,23 @@ const client = new Discord.Client();
 const fs = require('fs');
 const func = require('./functions');
 const parser = require('discord-command-parser');
-// eslint-disable-next-line no-unused-vars
-const path = require('path');
+const chalk = require('chalk');
+
 
 class Commands {
 
-	constructor(config) {
-		this.botconfig = config;
+	constructor(botconfig) {
+		this.botconfig = botconfig;
 		this.getcmds();
 	}
 	async getcmds() {
 		fs.readdir('./src/commands/', (err, files) => {
-			if (err) console.error(err);
+			if (err) console.log('There was an error getting the command files');
 			const jsfiles = files.filter(file => file.split('.').pop() === 'js');
 
 			if (jsfiles.length <= 0) return console.log('There are no commands to load...');
 
-			console.log(`Loading ${jsfiles.length} commands...`);
+			if (this.botconfig.debug) console.log(`Loading ${jsfiles.length} commands...`);
 			// eslint-disable-next-line id-length
 			jsfiles.forEach((f, i) => {
 				const Props = require(`./commands/${f}`);
@@ -44,21 +44,77 @@ class Commands {
 		}
 	}
 	async perms(msg, command) {
-		if (command.perms === undefined) return true;
-		for (const owner of this.botconfig.owners) {
-			if (msg.author.id === owner) return true;
+		if (command.perms === undefined) return;
+		if (this.botconfig.owners.includes(msg.author.id)) return;
+		if (command.perms.includes('BOT_OWNER')) throw new Error('Only the owner of the bot can use this command');
+		if (!msg.member.hasPermission[command.config.perms]) throw new Error('You do not have permission to use that command');
+		return;
+	}
+	async cooldown(msg, command) {
+		if (!client.cooldowns.has(command.command)) {
+			client.cooldowns.set(command.command, new Discord.Collection());
 		}
-		if (!msg.member.hasPermission[command.config.perms]) return false;
-		return true;
+
+		const now = Date.now();
+		const timestamps = client.cooldowns.get(command.command);
+		const cooldownAmount = (command.cooldown || 3) * 1000;
+
+		if (timestamps.has(msg.author.id)) {
+			const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
+
+			if (now < expirationTime) {
+				const timeLeft = (expirationTime - now) / 1000;
+				// return wait for cooldown
+				throw new Error(timeLeft.toFixed(1));
+			}
+		}
+
+		timestamps.set(msg.author.id, now);
+		setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
+		return;
 	}
-	async cooldown() {
-		// Cooldown not added
-		return true;
+	async args(msg, command, args) {
+		const isReq = (string) => {
+			const matched = string.match(/^<(.+)>$/);
+			return matched ? matched[1] : false;
+		};
+
+		if (command.args) {
+			var everythingAccountedFor = false;
+			const options = command.args.split(' | ');
+			for (const option of options) {
+				const [definer, ...values] = option.split(' ');
+				if (definer !== args[0]) continue;
+
+				if (
+					values.some((word, index) => {
+						console.log(args[index + 1], isReq(word));
+						if (isReq(word) && args[index + 1] !== isReq(word)) return true;
+						return false;
+					})
+				) break;
+
+				everythingAccountedFor = true;
+				break;
+			}
+			if (!everythingAccountedFor) throw new Error(command.args);
+		}
+		return;
+		/*
+		if (!command.args) return;
+		var found = false;
+		command.args.forEach((arg) => {
+			if (!args.join(' ').includes(arg)) found = true;
+		});
+		if (found) {
+			return msg.channel.send(
+				"You're message did not provide a required argument"
+			);
+		}
+		return msg + command + args;
+		*/
 	}
-	async args() {
-		// Argument testing not added
-		return true;
-	}
+
 	async run(msg, guildData) {
 		var parsed = parser.parse(msg, guildData.prefix || this.botconfig.prefix);
 		if (!parsed.success) return;
@@ -70,25 +126,45 @@ class Commands {
 		} else if (client.aliases.has(cmd)) {
 			command = client.commands.get(client.aliases.get(cmd));
 		} else {
-			this.help(msg, parsed);
+			client.commands.get('help').run(msg, parsed.arguments, parsed);
 			return;
 		}
-		if (!this.perms(msg, command)) {
+		if (command.guildOnly && msg.channel.type === 'dm') {
+			return func.send(msg, {
+				desc: 'This command can not be used in the dms'
+			});
+		}
+
+		this.perms(msg, command).catch((err) => {
 			func.send(msg, {
-				desc: `You do not have permission to use that command`,
 				title: `Missing Permissions`,
+				desc: err,
+				username: true,
 				color: '#fff000'
 			});
 			return;
-		}
-		command.run(msg, parsed.arguments);
-	}
-	async help(msg, parsed) {
-		var text = '';
-		client.commands.forEach((cmd) => {
-			text += `${parsed.prefix}${cmd.cmdconf.command} ${cmd.cmdconf.args} | ${cmd.cmdconf.usage}\n`;
 		});
-		func.send(msg, { desc: text });
+
+		this.cooldown(msg, command).catch((err) => {
+			func.send(msg, {
+				desc: `Please wait ${err}s before using that command again`,
+				title: `Cooldown`
+			});
+			return;
+		});
+
+		this.args(msg, command, parsed.arguments).catch((err) => {
+			func.send(msg, {
+				title: `Missing arguments`,
+				desc: `You did not provide all the needed arguments for that command`,
+				fields: [
+					{ title: 'Provided', value: parsed.arguments.join(' ') },
+					{ title: 'Expected', value: err }
+				]
+			});
+			return;
+		});
+		return command.run(msg, parsed.arguments, parsed);
 	}
 
 }
@@ -103,11 +179,8 @@ class SpiderBot {
 		client.login(this.bot.token);
 
 		client.on('ready', async () => {
-			if (this.bot.readyMessage) {
-				this.bot.readyMessage(client);
-			} else {
-				console.log('Bot ready');
-			}
+			console.log(chalk.redBright(`Ready ad ${client.user.username}\nPrefix: ${this.bot.prefix}`));
+
 			var cguilds = await client.guilds.cache.map((guilds) => guilds.id);
 			await cguilds.forEach((guild) => {
 				func.config('get', 'guild', guild);
@@ -119,11 +192,16 @@ class SpiderBot {
 					// .then(info => console.log(info));
 				}
 			});
-			new BotStatus(client).set(`A Game Of being Built\n Serving ${gguilds.length} guilds`);
+			new BotStatus(client).set(`A game of being built | ${this.bot.prefix}help\n Serving ${gguilds.length} guilds`);
+		});
+
+		client.on('error', (error) => {
+			console.log(chalk.red(`[Error] - The bot encountered an error - ${error}`));
 		});
 
 		client.commands = new Discord.Collection();
 		client.aliases = new Discord.Collection();
+		client.cooldowns = new Discord.Collection();
 
 		return client;
 	}
