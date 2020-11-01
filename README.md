@@ -12,7 +12,7 @@ New plan: Replace all the bots on Discord (just kidding)
 This bot is under heavy development and the code is **A little** messy right now.
 
 [Invite the bot to your server]() (not added yet as the bot is not ready for this)  
-[SpiderBot help and testing Discord server](https://discord.gg/6kFYJAP)
+[Discord](https://discord.gg/6kFYJAP)
 
 ## Recent Updates
 - Added command argument checking (not fully tested)
@@ -39,7 +39,7 @@ The bots commands and their usage can be found here <a href="">documentation</a>
 ## Links
 - SpiderBot Invite (Not ready)
 - [Trello board](https://trello.com/b/5VGBZZ64/spiderbot)
-- [SpiderBot Support Discord](https://discord.gg/6kFYJAP)
+- [Discord](https://discord.gg/6kFYJAP)
 - SpiderBot Homepage (Not done)
 
 
@@ -55,10 +55,10 @@ To start the bot, run `npm start` or `node index.js`
 ## Resources
 - [Discord.js Guide](https://discordjs.guide/)  
 - [Discord.js Documentation](https://discord.js.org/?source=post_page---------------------------#/docs/main/stable/general/welcome)  
-- [Discord.js discord server](https://discord.gg/bRCvFy9)
+- [Discord.js Discord](https://discord.gg/bRCvFy9)
 
 ## Credits
-- [SpiderGamin](https://github.com/SpiderGamin) - Bot Creator and Owner  
+- [Insberr (AKA SpiderGaming)](https://github.com/Insberr) - Bot Creator and Owner  
 - [AbacabaTheAbacus](https://github.com/AbacabaTheAbacus) - Helped with some of the code
 - The people of my discord server, who had to put up with the bots annoying spam issues*
 

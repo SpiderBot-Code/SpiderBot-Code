@@ -100,19 +100,6 @@ class Commands {
 			if (!everythingAccountedFor) throw new Error(command.args);
 		}
 		return;
-		/*
-		if (!command.args) return;
-		var found = false;
-		command.args.forEach((arg) => {
-			if (!args.join(' ').includes(arg)) found = true;
-		});
-		if (found) {
-			return msg.channel.send(
-				"You're message did not provide a required argument"
-			);
-		}
-		return msg + command + args;
-		*/
 	}
 
 	async run(msg, guildData) {
