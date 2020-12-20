@@ -3,17 +3,20 @@
 ![Discord](https://img.shields.io/discord/728316562163105925?color=blue&label=Discord&logo=%7B%7Bl&logoColor=blue)
 
 # SpiderBot
-Spiderbot, Made to do everything, free, forever. (Of course the bot does not do much right now, I'm still developing it)  
+Spiderbot, Made to do everything, free, forever.  
 SpiderBot brings moderation, leveling, games, and much more!  
-The bot is still being developed, and has a long way till It's done.
+~~The bot is still being developed, and has a long way till It's done.~~
 
 Original plan: Replace all the bots on my Discord server.  
 New plan: Replace all the bots on Discord (just kidding)
 
-This bot is under heavy development and the code is **A little** messy right now.
+This bot is currently not in development and the code is not functioning.
 
-[Invite the bot to your server]() (not added yet as the bot is not ready for this)  
-[Discord](https://discord.gg/6kFYJAP)
+
+[Discord](https://discord.gg/PSNKV6EB9A)
+
+### NOTES
+I am planning to rename this bot and attempt to bring back development once the new discord bot features come out.
 
 ## Recent Updates
 - Added command argument checking (not fully tested)
@@ -40,7 +43,7 @@ The bots commands and their usage can be found here <a href="">documentation</a>
 ## Links
 - SpiderBot Invite (Not ready)
 - [Trello board](https://trello.com/b/5VGBZZ64/spiderbot)
-- [Discord](https://discord.gg/6kFYJAP)
+- [Discord](https://discord.gg/PSNKV6EB9A)
 - SpiderBot Homepage (Not done)
 
 
@@ -59,11 +62,7 @@ To start the bot, run `npm start` or `node index.js`
 - [Discord.js Discord](https://discord.gg/bRCvFy9)
 
 ## Credits
-- [Insberr](https://github.com/Insberr) - Bot Creator and Owner  
+- [Insberr](https://github.com/insberr) - Bot Creator and Owner  
 - [AbacabaTheAbacus](https://github.com/AbacabaTheAbacus) - Helped with some of the code
 - The people of my discord server, who had to put up with the bots annoying spam issues*
 
-
-### Notes
-_I'm still trying to find a good, free, hosting option for this bot (thats not using my raspberry pi)_  
-Figure out how to handle command arguments
