@@ -19,6 +19,7 @@ bot.on('message', async (msg) => {
 });
 
 bot.on('messageUpdate', async (msg) => {
+	Spider.command(msg);
 	Spider.filter(msg);
 });
 
